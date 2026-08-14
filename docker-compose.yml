@@ -1,0 +1,126 @@
+version: "3.8"
+
+services:
+  # Database
+  db:
+    image: mariadb:10.6
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Redis Caching & Queue
+  redis-cache:
+    image: redis:7-alpine
+    networks:
+      - app-network
+
+  redis-queue:
+    image: redis:7-alpine
+    networks:
+      - app-network
+
+  # Single Multi-Tenant Frappe Backend Container
+  frappe:
+    build:
+      context: ./frappe
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - sites-data:/home/frappe/frappe-bench/sites
+      - apps:/home/frappe/frappe-bench/apps
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+    networks:
+      - app-network
+
+  # Nyeri React Frontend
+  # nyeri-react:
+  #   build:
+  #     context: ./react-demo-app
+  #     dockerfile: ../nyeri-react/Dockerfile
+  #   networks:
+  #     - app-network
+
+  nyeri-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "8081"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "nyeri.site"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${NYERI_SITE_NAME}
+      BACKEND_PORT: "${NYERI_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Muranga React Frontend
+  muranga-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "8082"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "muranga.site"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${MURANGA_SITE_NAME}
+      BACKEND_PORT: "${MURANGA_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # muranga-react:
+  #   build:
+  #     context: ./react-demo-app
+  #     dockerfile: ../nyeri-react/Dockerfile
+  #   networks:
+  #     - app-network
+
+  # Edge Reverse Proxy
+  edge-proxy:
+    image: nginx:alpine
+    ports:
+      - "${NYERI_FRONTEND_PORT}:3000"
+      - "${MURANGA_FRONTEND_PORT}:3001"
+      - "${NYERI_BACKEND_PORT}:8081"
+      - "${MURANGA_BACKEND_PORT}:8082"
+    volumes:
+      - ./edge-nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # MOUNT SITES DATA VOLUME TO NGINX FOR STATIC ASSETS. Read-only is FINE for Nginx edge proxy
+      - sites-data:/home/frappe/frappe-bench/sites:ro
+      - apps:/home/frappe/frappe-bench/apps:ro
+    depends_on:
+      - frappe
+      - nyeri-react
+      - muranga-react
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+  sites-data:
+  apps:
+
+networks:
+  app-network:
+    driver: bridge

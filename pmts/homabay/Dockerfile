@@ -7,7 +7,7 @@ RUN npm ci
 
 COPY . .
 # Set API target host for frappe-react-sdk build if needed
-ENV REACT_APP_FRAPPE_URL=http://localhost:8082
+ENV REACT_APP_FRAPPE_URL=http://localhost:${HOMABAY_BACKEND_PORT}
 # RUN npm run build
 
 # Stage 2: Serve using Nginx

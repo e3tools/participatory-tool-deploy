@@ -67,6 +67,7 @@ install_app() {
   fi
 } 
 
+# Delete the site that is not applicable
 create_site_if_missing "$NYERI_SITE_NAME"
 create_site_if_missing "$TAITA_SITE_NAME"
 create_site_if_missing "$MURANGA_SITE_NAME"

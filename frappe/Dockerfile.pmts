@@ -21,9 +21,9 @@ RUN chmod 755 /usr/local/bin/wait-for-it
 USER frappe
 WORKDIR /home/frappe/frappe-bench
 
-RUN bench get-app https://oauth2:glpat-S3dMF22Ci_feEP6Bb0jOu2M6MQpvOjEKdToxd2UwDg.01.160dqwctf@gitlab.com/steve.nyaga/gis.git --branch main
-RUN bench get-app https://github.com/e3tools/participatory-tool.git --branch main
-# RUN bench get-app https://oauth2:glpat-S3dMF22Ci_feEP6Bb0jOu2M6MQpvOjEKdToxd2UwDg.01.160dqwctf@gitlab.com/steve.nyaga/project-monitor.git --branch main
+RUN bench get-app gis https://github.com/e3tools/participatory-tool-gis.git --branch main
+RUN bench get-app participatory_backend https://github.com/e3tools/participatory-tool.git --branch main
+RUN bench get-app project_monitor https://github.com/e3tools/project-tracking-monitoring-backend.git --branch main
 
 # --------------------------------------------------------------------------
 # 📍 ADDED: Install Fiona & Shapely (geospatial) into the bench Python venv

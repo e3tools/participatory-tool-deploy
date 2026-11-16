@@ -26,6 +26,21 @@ To simplify maintenance, the system is driven by two automated scripts:
 1. **`_publish.sh`**: Run locally to build, tag, and push new software versions to Docker Hub.
 2. **`_deploy.sh`**: Executed on the live server to pull updates, perform automated safety backups, synchronize site files and encryption keys, run site migrations, and clean up disk space.
 
+docker-compose files contain an option to either build from local context or pull from pre-built images. See the example below:
+
+```bash
+
+homabay-engage-app:
+    pull_policy: never
+    build:
+      context: ~/systems/engage-frontend/
+      dockerfile: deploy/Dockerfile
+      args:
+        EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${HOMABAY_BACKEND_PORT}"
+    image: ${DOCKERHUB_USER}/homabay-engage-app:${VERSION}
+
+```
+
 ### Directory Organization
 
 ```

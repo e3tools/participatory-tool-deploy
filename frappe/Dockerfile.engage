@@ -21,9 +21,16 @@ RUN chmod 755 /usr/local/bin/wait-for-it
 USER frappe
 WORKDIR /home/frappe/frappe-bench
 
+RUN echo "Installing base apps"
 RUN bench get-app gis https://github.com/e3tools/participatory-tool-gis.git --branch main
 RUN bench get-app participatory_backend https://github.com/e3tools/participatory-tool.git --branch main
  
+RUN echo "Install requirements.txt"
+
+# prevent any pip command in your Dockerfile from upgrading NumPy to 2.x
+RUN echo "numpy<2" > /tmp/pip-constraints.txt
+ENV PIP_CONSTRAINT=/tmp/pip-constraints.txt
+
 # --------------------------------------------------------------------------
 # 📍 ADDED: Install Fiona & Shapely (geospatial) into the bench Python venv
 # --------------------------------------------------------------------------
@@ -41,7 +48,8 @@ RUN /home/frappe/frappe-bench/env/bin/pip install fiona && \
   # If requirements.txt exists, install it after replacing scipy version
   if [ -f /tmp/pysld/requirements.txt ]; then \
     echo "📦 Replacing scipy version for pysld..."; \
-    sed -i.bak -E 's/^scipy([<>=!~].*)?$/scipy==1.10.0/' /tmp/pysld/requirements.txt \
+    sed -i.bak -E 's/^scipy([<>=!~].*)?$/scipy==1.10.0/' /tmp/pysld/requirements.txt; \
+    echo "numpy<2" >> /tmp/pysld/requirements.txt; \
     echo "📦 Installing requirements for pysld..."; \
     /home/frappe/frappe-bench/env/bin/pip install --no-cache-dir -r /tmp/pysld/requirements.txt; \
   fi && \

@@ -26,6 +26,6 @@ echo "=== 3. Tagging Images for Docker Hub ==="
 # docker tag nyeri-engage-app:latest ${DOCKER_HUB_USER}/nyeri-engage-app:latest
 
 echo "=== 4. Pushing Images to Docker Hub ==="
-# docker compose -f ${DOCKER_COMPOSE_FILE} push 
+docker compose -f ${DOCKER_COMPOSE_FILE} push 
 
 echo "=== Publishing Completed Successfully! ==="

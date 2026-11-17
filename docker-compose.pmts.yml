@@ -1,0 +1,259 @@
+version: "3.8"
+
+name: ${PIMTS_PROJECT_NAME}
+
+services:
+  # Database
+  db:
+    image: mariadb:10.6
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max-allowed-packet=512M
+      - --innodb-file-per-table=1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Redis Caching & Queue
+  redis-cache:
+    image: redis:7-alpine
+    networks:
+      - app-network
+
+  redis-queue:
+    image: redis:7-alpine
+    networks:
+      - app-network
+
+  # Single Multi-Tenant Frappe Backend Container
+  frappe:
+    build:
+      context: ./frappe
+      dockerfile: Dockerfile.pmts
+    env_file:
+      - .env
+    volumes:
+      - sites-data:/home/frappe/frappe-bench/sites
+      - apps:/home/frappe/frappe-bench/apps
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+    networks:
+      - app-network
+
+  # Nyeri React Frontend
+  # nyeri-react:
+  #   build:
+  #     context: ./react-demo-app
+  #     dockerfile: ../nyeri-react/Dockerfile
+  #   networks:
+  #     - app-network
+
+  # Nyeri React Frontend
+  nyeri-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "${NYERI_BACKEND_PORT}"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "${NYERI_SITE_NAME}"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${NYERI_SITE_NAME}
+      BACKEND_PORT: "${NYERI_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Muranga React Frontend
+  muranga-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "${MURANGA_BACKEND_PORT}"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "${MURANGA_SITE_NAME}"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${MURANGA_SITE_NAME}
+      BACKEND_PORT: "${MURANGA_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Taita React Frontend
+  taita-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "${TAITA_BACKEND_PORT}"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "${TAITA_SITE_NAME}"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${TAITA_SITE_NAME}
+      BACKEND_PORT: "${TAITA_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Vihiga React Frontend
+  vihiga-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "${VIHIGA_BACKEND_PORT}"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "${VIHIGA_SITE_NAME}"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${VIHIGA_SITE_NAME}
+      BACKEND_PORT: "${VIHIGA_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Nandi React Frontend
+  nandi-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "${NANDI_BACKEND_PORT}"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "${NANDI_SITE_NAME}"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${NANDI_SITE_NAME}
+      BACKEND_PORT: "${NANDI_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Homabay React Frontend
+  homabay-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "${HOMABAY_BACKEND_PORT}"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "${HOMABAY_SITE_NAME}"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${HOMABAY_SITE_NAME}
+      BACKEND_PORT: "${HOMABAY_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Makueni React Frontend
+  makueni-react:
+    pull_policy: never
+    build:
+      context: ~/systems/nairobi-pmts/
+      dockerfile: deploy/Dockerfile
+      args:
+        VITE_FRAPPE_BACKEND_URL: "http://localhost"
+        VITE_FRAPPE_BACKEND_PORT: "${MAKUENI_BACKEND_PORT}"
+        VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
+        # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
+        VITE_FRAPPE_SITE: "${MAKUENI_SITE_NAME}"
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${MAKUENI_SITE_NAME}
+      BACKEND_PORT: "${MAKUENI_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network
+    
+  # # # Nyeri Engage App
+  # nyeri-engage-app:
+  #   pull_policy: never
+  #   build:
+  #     context: ~/systems/engage-frontend/
+  #     dockerfile: deploy/Dockerfile
+  #     args:
+  #       EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${NYERI_BACKEND_PORT}"
+  #   environment:
+  #     # Tells Nginx which internal service and port to target
+  #     BACKEND_HOST: ${NYERI_SITE_NAME}
+  #     BACKEND_PORT: "${NYERI_BACKEND_PORT}"
+  #     EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${NYERI_BACKEND_PORT}"
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network 
+
+  # Edge Reverse Proxy
+  edge-proxy:
+    image: nginx:alpine
+    ports:
+      - "${NYERI_FRONTEND_PORT}:${NYERI_FRONTEND_PORT}"
+      - "${TAITA_FRONTEND_PORT}:${TAITA_FRONTEND_PORT}"
+      - "${MURANGA_FRONTEND_PORT}:${MURANGA_FRONTEND_PORT}"
+      - "${VIHIGA_FRONTEND_PORT}:${VIHIGA_FRONTEND_PORT}"
+      - "${NANDI_FRONTEND_PORT}:${NANDI_FRONTEND_PORT"
+      - "${HOMABAY_FRONTEND_PORT}:${HOMABAY_FRONTEND_PORT}"
+      - "${MAKUENI_FRONTEND_PORT}:${MAKUENI_FRONTEND_PORT}"
+
+      - "${NYERI_BACKEND_PORT}:${NYERI_BACKEND_PORT}"
+      - "${TAITA_BACKEND_PORT}:${TAITA_BACKEND_PORT}"
+      - "${MURANGA_BACKEND_PORT}:${MURANGA_BACKEND_PORT}"
+      - "${VIHIGA_BACKEND_PORT}:${VIHIGA_BACKEND_PORT}"
+      - "${NANDI_BACKEND_PORT}:${NANDI_BACKEND_PORT}"
+      - "${HOMABAY_BACKEND_PORT}:${HOMABAY_BACKEND_PORT}"
+      - "${MAKUENI_BACKEND_PORT}:${MAKUENI_BACKEND_PORT}"
+      # - "8083:8083"
+    volumes:
+      - ./edge-nginx/nginx.pmts.conf:/etc/nginx/nginx.conf:ro
+      # MOUNT SITES DATA VOLUME TO NGINX FOR STATIC ASSETS. Read-only is FINE for Nginx edge proxy
+      - sites-data:/home/frappe/frappe-bench/sites:ro
+      - apps:/home/frappe/frappe-bench/apps:ro
+    depends_on:
+      - frappe
+      - nyeri-react
+      - taita-react
+      - muranga-react
+      - vihiga-react
+      - nandi-react
+      - homabay-react
+      - makueni-react
+      # - nyeri-engage-app
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+  sites-data:
+  apps:
+
+networks:
+  app-network:
+    driver: bridge

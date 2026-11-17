@@ -2,7 +2,7 @@ FROM frappe/erpnext:version-15
 
 USER root
 # Install curl to download wait-for-it
-RUN apt-get update \
+RUN apt-get update -o Acquire::AllowInsecureRepositories=true -o Acquire::AllowDowngradeToInsecureRepositories=true \
     && apt-get install --no-install-recommends -y \
     && apt-get install -y curl \
     # ----------------------------------------------------
@@ -21,10 +21,9 @@ RUN chmod 755 /usr/local/bin/wait-for-it
 USER frappe
 WORKDIR /home/frappe/frappe-bench
 
-RUN bench get-app https://oauth2:glpat-S3dMF22Ci_feEP6Bb0jOu2M6MQpvOjEKdToxd2UwDg.01.160dqwctf@gitlab.com/steve.nyaga/gis.git --branch main
-RUN bench get-app https://github.com/e3tools/participatory-tool.git --branch develop
-RUN bench get-app https://oauth2:glpat-S3dMF22Ci_feEP6Bb0jOu2M6MQpvOjEKdToxd2UwDg.01.160dqwctf@gitlab.com/steve.nyaga/project-monitor.git --branch main
-
+RUN bench get-app gis https://github.com/e3tools/participatory-tool-gis.git --branch main
+RUN bench get-app participatory_backend https://github.com/e3tools/participatory-tool.git --branch main
+ 
 # --------------------------------------------------------------------------
 # 📍 ADDED: Install Fiona & Shapely (geospatial) into the bench Python venv
 # --------------------------------------------------------------------------
@@ -70,7 +69,7 @@ RUN /home/frappe/frappe-bench/env/bin/pip install fiona && \
 # # This official image already contains perfectly compiled frappe & erpnext code
 # FROM frappe/erpnext:${FRAPPE_BRANCH} AS production
 
-COPY --chown=frappe:frappe create-sites.sh /home/frappe/frappe-bench/create-sites.sh
+COPY --chown=frappe:frappe create-sites.engage.sh /home/frappe/frappe-bench/create-sites.sh
 RUN chmod +x /home/frappe/frappe-bench/create-sites.sh
 
 ENTRYPOINT ["/home/frappe/frappe-bench/create-sites.sh"]

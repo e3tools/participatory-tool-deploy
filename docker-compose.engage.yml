@@ -96,7 +96,7 @@ services:
       dockerfile: deploy/Dockerfile
       args:
         EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${NYERI_BACKEND_PORT}"
-    image: ${DOCKERHUB_USER}/nyeri-engage-app:${VERSION}
+    image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
       BACKEND_HOST: ${NYERI_SITE_NAME}
@@ -114,7 +114,7 @@ services:
       dockerfile: deploy/Dockerfile
       args:
         EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${MURANGA_BACKEND_PORT}"
-    image: ${DOCKERHUB_USER}/muranga-engage-app:${VERSION}
+    image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
       BACKEND_HOST: ${MURANGA_SITE_NAME}
@@ -132,7 +132,7 @@ services:
       dockerfile: deploy/Dockerfile
       args:
         EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${TAITA_BACKEND_PORT}"
-    image: ${DOCKERHUB_USER}/taita-engage-app:${VERSION}
+    image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
       BACKEND_HOST: ${TAITA_SITE_NAME}
@@ -150,7 +150,7 @@ services:
       dockerfile: deploy/Dockerfile
       args:
         EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${VIHIGA_BACKEND_PORT}"
-    image: ${DOCKERHUB_USER}/vihiga-engage-app:${VERSION}
+    image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
       BACKEND_HOST: ${VIHIGA_SITE_NAME}
@@ -168,7 +168,7 @@ services:
       dockerfile: deploy/Dockerfile
       args:
         EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${NANDI_BACKEND_PORT}"
-    image: ${DOCKERHUB_USER}/nandi-engage-app:${VERSION}
+    image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
       BACKEND_HOST: ${NANDI_SITE_NAME}
@@ -186,7 +186,7 @@ services:
       dockerfile: deploy/Dockerfile
       args:
         EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${HOMABAY_BACKEND_PORT}"
-    image: ${DOCKERHUB_USER}/homabay-engage-app:${VERSION}
+    image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
       BACKEND_HOST: ${HOMABAY_SITE_NAME}
@@ -204,7 +204,7 @@ services:
       dockerfile: deploy/Dockerfile
       args:
         EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${MAKUENI_BACKEND_PORT}"
-    image: ${DOCKERHUB_USER}/makueni-engage-app:${VERSION}
+    image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
       BACKEND_HOST: ${MAKUENI_SITE_NAME}

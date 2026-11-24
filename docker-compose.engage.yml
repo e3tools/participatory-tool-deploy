@@ -47,55 +47,8 @@ services:
     networks:
       - app-network
 
-  # nyeri-react:
-  #   pull_policy: never
-  #   build:
-  #     context: ~/systems/nairobi-pmts/
-  #     dockerfile: deploy/Dockerfile
-  #     args:
-  #       VITE_FRAPPE_BACKEND_URL: "http://localhost"
-  #       VITE_FRAPPE_BACKEND_PORT: "8081"
-  #       VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
-  #       # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
-  #       VITE_FRAPPE_SITE: "nyeri.site"
-  #   image: ${DOCKERHUB_USER}/nyeri-react:${VERSION}
-  #   environment:
-  #     # Tells Nginx which internal service and port to target
-  #     BACKEND_HOST: ${NYERI_SITE_NAME}
-  #     BACKEND_PORT: "${NYERI_BACKEND_PORT}"
-  #   restart: unless-stopped
-  #   networks:
-  #     - app-network
-
-  # # Muranga React Frontend
-  # muranga-react:
-  #   pull_policy: never
-  #   build:
-  #     context: ~/systems/nairobi-pmts/
-  #     dockerfile: deploy/Dockerfile
-  #     args:
-  #       VITE_FRAPPE_BACKEND_URL: "http://localhost"
-  #       VITE_FRAPPE_BACKEND_PORT: "8082"
-  #       VITE_FRAPPE_BACKEND_SUBDOMAIN: ""
-  #       # VITE_FRAPPE_BACKEND_SUBDOMAIN: "/backend"
-  #       VITE_FRAPPE_SITE: "muranga.site"
-  #   image: ${DOCKERHUB_USER}/muranga-react:${VERSION}
-  #   environment:
-  #     # Tells Nginx which internal service and port to target
-  #     BACKEND_HOST: ${MURANGA_SITE_NAME}
-  #     BACKEND_PORT: "${MURANGA_BACKEND_PORT}"
-  #   restart: unless-stopped
-  #   networks:
-  #     - app-network
-
   # # Nyeri Engage App
   nyeri-engage-app:
-    pull_policy: never
-    build:
-      context: ~/systems/engage-frontend/
-      dockerfile: deploy/Dockerfile
-      args:
-        EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${NYERI_BACKEND_PORT}"
     image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
@@ -108,12 +61,6 @@ services:
 
    # # Muranga Engage App
   muranga-engage-app:
-    pull_policy: never
-    build:
-      context: ~/systems/engage-frontend/
-      dockerfile: deploy/Dockerfile
-      args:
-        EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${MURANGA_BACKEND_PORT}"
     image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
@@ -126,12 +73,6 @@ services:
 
   # # Taita Engage App
   taita-engage-app:
-    pull_policy: never
-    build:
-      context: ~/systems/engage-frontend/
-      dockerfile: deploy/Dockerfile
-      args:
-        EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${TAITA_BACKEND_PORT}"
     image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
@@ -144,12 +85,6 @@ services:
 
   # # Vihiga Engage App
   vihiga-engage-app:
-    pull_policy: never
-    build:
-      context: ~/systems/engage-frontend/
-      dockerfile: deploy/Dockerfile
-      args:
-        EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${VIHIGA_BACKEND_PORT}"
     image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
@@ -162,12 +97,6 @@ services:
 
   # # Nandi Engage App
   nandi-engage-app:
-    pull_policy: never
-    build:
-      context: ~/systems/engage-frontend/
-      dockerfile: deploy/Dockerfile
-      args:
-        EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${NANDI_BACKEND_PORT}"
     image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
@@ -180,12 +109,6 @@ services:
   
   # # Homabay Engage App
   homabay-engage-app:
-    pull_policy: never
-    build:
-      context: ~/systems/engage-frontend/
-      dockerfile: deploy/Dockerfile
-      args:
-        EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${HOMABAY_BACKEND_PORT}"
     image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
@@ -198,12 +121,6 @@ services:
 
   # # Makueni Engage App
   makueni-engage-app:
-    pull_policy: never
-    build:
-      context: ~/systems/engage-frontend/
-      dockerfile: deploy/Dockerfile
-      args:
-        EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${MAKUENI_BACKEND_PORT}"
     image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
     environment:
       # Tells Nginx which internal service and port to target
@@ -218,14 +135,6 @@ services:
   edge-proxy:
     image: nginx:alpine
     ports:
-      # - "${NYERI_FRONTEND_PORT}:3000"
-      # - "${MURANGA_FRONTEND_PORT}:3001"
-      # - "${NYERI_BACKEND_PORT}:8081"
-      # - "${MURANGA_BACKEND_PORT}:8082"
-      # - "8083:8083"
-      - "${NYERI_FRONTEND_PORT}:3000"
-      - "${MURANGA_FRONTEND_PORT}:3001"
-
       - "${NYERI_BACKEND_PORT}:${NYERI_BACKEND_PORT}"
       - "${MURANGA_BACKEND_PORT}:${MURANGA_BACKEND_PORT}"
       - "${TAITA_BACKEND_PORT}:${TAITA_BACKEND_PORT}"
@@ -240,8 +149,6 @@ services:
       - apps:/home/frappe/frappe-bench/apps:ro
     depends_on:
       - frappe
-      # - nyeri-react
-      # - muranga-react
       - nyeri-engage-app
       - muranga-engage-app
       - taita-engage-app

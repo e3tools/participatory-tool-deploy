@@ -34,7 +34,8 @@ services:
     build:
       context: ./frappe
       dockerfile: Dockerfile.engage
-    image: ${DOCKERHUB_USER}/frappe-backend-multiple-sites:${VERSION}
+    # image: ${DOCKERHUB_USER}/frappe-backend-multiple-sites:${VERSION}
+    image: ${DOCKERHUB_USER}/frappe-backend:${VERSION}
     env_file:
       - .env
     volumes:

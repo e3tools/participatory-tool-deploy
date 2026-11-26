@@ -34,7 +34,7 @@ services:
     build:
       context: ./frappe
       dockerfile: Dockerfile.engage
-    image: ${DOCKERHUB_USER}/frappe-backend:${VERSION}
+    image: ${DOCKERHUB_USER}/frappe-backend-multiple-sites:${VERSION}
     env_file:
       - .env
     volumes:
@@ -46,6 +46,18 @@ services:
       - redis-queue
     networks:
       - app-network
+
+   # # Nyeri Engage App
+  default-engage-app:
+    image: ${DOCKERHUB_USER}/engage-frontend:${VERSION}
+    environment:
+      # Tells Nginx which internal service and port to target
+      BACKEND_HOST: ${DEFAULT_SITE_NAME}
+      BACKEND_PORT: "${DEFAULT_SITE_BACKEND_PORT}"
+      EXPO_PUBLIC_FRAPPE_URL_WEB: "http://localhost:${DEFAULT_SITE_BACKEND_PORT}"
+    restart: unless-stopped
+    networks:
+      - app-network 
 
   # # Nyeri Engage App
   nyeri-engage-app:
@@ -135,6 +147,7 @@ services:
   edge-proxy:
     image: nginx:alpine
     ports:
+      - "${DEFAULT_SITE_BACKEND_PORT}:${DEFAULT_SITE_BACKEND_PORT}"
       - "${NYERI_BACKEND_PORT}:${NYERI_BACKEND_PORT}"
       - "${MURANGA_BACKEND_PORT}:${MURANGA_BACKEND_PORT}"
       - "${TAITA_BACKEND_PORT}:${TAITA_BACKEND_PORT}"
